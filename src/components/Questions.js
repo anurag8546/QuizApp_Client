@@ -1,27 +1,44 @@
 import React, { useEffect, useState } from 'react'
-import data from '../database/data'
+import { useSelector } from 'react-redux';
 
+// custom hook
+import { useFetchQuestion } from '../hooks/FetchQuestion';
 
 export default function Questions() {
 
-    const [checked, setchecked] = useState(undefined)
+    const [checked, setchecked] = useState(undefined);
+    const [{ isLoading, apiData, serverError }] = useFetchQuestion();
 
-    const question = data[0];
+    
+    const questions = useSelector(state => state.questions.queue[state.questions.trace]);
+    const trace=useSelector(state=> state.questions.trace);  
+    
+    useEffect(() => {
+        console.log(questions);
+    })
 
 
     useEffect(() => {
-        console.log(question);
+        // console.log(question);
+        // console.log(isLoading);
+        // console.log(apiData);
+        // console.log(serverError);
     })
 
     function onSelect() {
-        console.log("radio button trigger")
+        // console.log("radio button trigger")
     }
+
+    if (isLoading)
+        return <h3 className='text-light'>isLoading</h3>
+    if (serverError)
+        return <h3 className='text-light'>{serverError || "Unknown error"}</h3>
     return (
         <div className='questions'>
-            <h2 className='text-light'>{question.question}</h2>
-            <ul key={question.id}>
+            <h2 className='text-light'>{questions?.question}</h2>
+            <ul key={questions?.id}>
                 {
-                    question.options.map((q, i) => (
+                    questions?.options.map((q, i) => (
                         <li key={i}>
                             <input type='radio' value={false} name='options' id={`q${i}-option`} onChange={onSelect()}></input>
                             <label className='text-primary' htmlFor={`q${i}-option`}>{q}</label>

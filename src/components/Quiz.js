@@ -1,10 +1,18 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Questions from './Questions';
 import { Link } from 'react-router-dom';
 
-
+// import react redux
+import {useSelector} from "react-redux"
 
 export default function Quiz() {
+
+  const state = useSelector(state=>state);
+
+  useEffect(()=>{
+    // console.log(state);
+    })
+
   function onNext(){
     console.log("next is triggered");
   }
