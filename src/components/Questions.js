@@ -1,21 +1,29 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 // custom hook
 import { useFetchQuestion } from '../hooks/FetchQuestion';
+import { updateResultAction } from '../redux/result_reducer';
+import { updateResult } from '../hooks/setResult';
 
-export default function Questions() {
+export default function Questions({onChecked}) {
 
-    const [checked, setchecked] = useState(undefined);
+    const [checked, setChecked] = useState(undefined);
     const [{ isLoading, apiData, serverError }] = useFetchQuestion();
-
+    // useSelector(state=>console.log(state))
     
+    const dispatch=useDispatch();
+    const {trace} = useSelector(state => state.questions)
+    const result = useSelector(state => state.result.result)
+
+    useSelector(state=> console.log(state))
     const questions = useSelector(state => state.questions.queue[state.questions.trace]);
-    const trace=useSelector(state=> state.questions.trace);  
+    // const trace = useSelector(state=> state.questions.trace);  
     
     useEffect(() => {
-        console.log(questions);
-    })
+        // console.log({trace,checked})
+        dispatch(updateResult({trace,checked}))
+    },[checked])
 
 
     useEffect(() => {
@@ -25,8 +33,11 @@ export default function Questions() {
         // console.log(serverError);
     })
 
-    function onSelect() {
-        // console.log("radio button trigger")
+    function onSelect(i) {
+        // console.log(i)
+        onChecked(i);
+        setChecked(i);
+        dispatch(updateResult({trace,checked}))
     }
 
     if (isLoading)
@@ -40,9 +51,9 @@ export default function Questions() {
                 {
                     questions?.options.map((q, i) => (
                         <li key={i}>
-                            <input type='radio' value={false} name='options' id={`q${i}-option`} onChange={onSelect()}></input>
+                            <input type='radio' value={false} name='options' id={`q${i}-option`} onChange={()=> onSelect(i)}></input>
                             <label className='text-primary' htmlFor={`q${i}-option`}>{q}</label>
-                            <div className='check '></div>
+                            <div className={`check ${result[trace] == i ? 'checked' : ''}`}></div>
                         </li>
                     ))
                 }
