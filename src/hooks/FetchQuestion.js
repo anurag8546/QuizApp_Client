@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 import { useState } from "react"
-import data from "../database/data"
+import data, {answers} from "../database/data"
 import { useDispatch } from "react-redux"
 
 // redux actions 
@@ -21,10 +21,10 @@ export const useFetchQuestion = () => {
                     let question = await data;
                     if (question.length > 0) {
                         setGetData(prev => ({ ...prev, isLoading: false }));
-                        setGetData(prev => ({ ...prev, apiData: question }));
+                        setGetData(prev => ({ ...prev, apiData: {question, answers} }));
 
                         // dispatch an action 
-                        dispatch(Action.startExamAction(question))
+                        dispatch(Action.startExamAction({question, answers}))
                     }
                     else {
                         throw new Error("No Question Available");
@@ -37,4 +37,22 @@ export const useFetchQuestion = () => {
     }, [dispatch]);
 
     return [getData, setGetData];
+}
+
+export const MoveNextQuestion = () => async(dispatch) =>{
+    try{
+        dispatch(Action.moveNextAction());
+    } catch(error)
+    {
+        console.log(error)
+    }
+}
+
+export const MovePrevQuestion = () => async(dispatch) =>{
+    try{
+        dispatch(Action.movePrevAction());
+    } catch(error)
+    {
+        console.log(error)
+    }
 }
